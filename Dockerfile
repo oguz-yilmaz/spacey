@@ -1,15 +1,23 @@
-FROM  bitnami/laravel:9
+FROM php:8.1.1-apache
 
-RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer \
-    && curl -sLS https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
+RUN apt-get update && apt-get install -y ca-certificates gnupg
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 
-RUN apt-get install -y nodejs \
-    && npm install -g npm
+RUN apt-get update && apt-get upgrade -y && apt-get install -y git nodejs
+
+WORKDIR /app/www/html
+
+RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+
+RUN node --version
 
 EXPOSE 8000
 
 COPY . .
 
-RUN php composer install && npm install && npm run dev
+RUN composer install && npm install && npm run dev
 
-ENTRYPOINT ["php artisan serve"]
+CMD ["php","artisan", "serve"]
+
+# docker build -t test-app .
+# docker run -ti --network host test-app

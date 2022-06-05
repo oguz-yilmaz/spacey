@@ -50,6 +50,7 @@ public function handleAcceptRequest()
 
 ### Running
 
-- `php composer install`
-- `php artisan serve`
+- docker build -t test-app .
+- docker run -ti --network host test-app
+- url: http://127.0.0.1:8000
 
