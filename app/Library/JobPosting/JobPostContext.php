@@ -3,9 +3,9 @@
 namespace App\Library\JobPosting;
 
 use App\Library\JobPosting\States\AbstractState;
-use App\Library\JobPosting\States\Started;
 use App\Library\JobPosting\Traits\ChecksState;
 use App\Models\Client;
+use App\Models\JobPost;
 use App\Models\JobPost as JobPostModel;
 use App\Models\Provider;
 use Exception;
@@ -31,8 +31,11 @@ class JobPostContext
         $this->statusTo = $data['status'];
         $this->data = collect($this->data);
 
+        $statusClass = $this->jobModel->getStatusClass($this->jobModel->status);
+
         $this->setIssuerType();
-        $this->setState(new Started($this));
+
+        $this->setState(new $statusClass($this));
     }
 
     public function update()
@@ -46,15 +49,25 @@ class JobPostContext
 
     public function setIssuerType()
     {
-        if ($this->jobModel->client_id) {
-            $this->issuerType = Client::class;
+        if (!$this->data->has('issuer')) {
+            throw new Exception('Please provide issuer.');
         }
-        elseif ($this->jobModel->provider_id && !$this->jobModel->client_id) {
-            $this->issuerType = Provider::class;
-        }
-        else {
-            $this->issuerType = null;
-        }
+
+        $issuers = config('jobs.issuers');
+
+        $this->issuerType = $issuers[$this->data['issuer']];
+    }
+
+    public function setData(Collection $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function getData(): Collection|array
+    {
+        return $this->data;
     }
 
     public function setState(AbstractState $state): self

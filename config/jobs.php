@@ -47,5 +47,9 @@ return [
         $closed => [
             'statuses' => [],
         ],
+    ],
+    'issuers' => [
+        1 => \App\Models\Provider::class,
+        2 => \App\Models\Client::class,
     ]
 ];

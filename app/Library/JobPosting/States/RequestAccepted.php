@@ -15,8 +15,7 @@ class RequestAccepted extends AbstractState
     {
         $context = $this->getContext();
 
-        // HANDLE STUFF ...
-
-        $context->setState(new Proposed($context));
+        $context->setData(collect([]))
+            ->setState(new Contracted($context));
     }
 }

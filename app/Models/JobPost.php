@@ -2,6 +2,13 @@
 
 namespace App\Models;
 
+use App\Library\JobPosting\States\Canceled;
+use App\Library\JobPosting\States\Closed;
+use App\Library\JobPosting\States\Contracted;
+use App\Library\JobPosting\States\Drafted;
+use App\Library\JobPosting\States\Posted;
+use App\Library\JobPosting\States\RequestAccepted;
+use App\Library\JobPosting\States\Started;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
@@ -27,5 +34,21 @@ class JobPost extends Model
     static function getStatuses(): array
     {
         return (new ReflectionClass(__CLASS__))->getConstants();
+    }
+
+    public function getStatusClass(int $status)
+    {
+        $statusClasses = [
+            self::STATUS_STARTED => Started::class,
+            self::STATUS_CONTRACTED => Contracted::class,
+            self::STATUS_DRAFTED => Drafted::class,
+            self::STATUS_CANCELED => Canceled::class,
+            self::STATUS_POSTED => Posted::class,
+            self::STATUS_REQUEST_ACCEPTED => RequestAccepted::class,
+            self::STATUS_PROPOSED => Proposed::class,
+            self::STATUS_CLOSED => Closed::class,
+        ];
+
+        return $statusClasses[$status];
     }
 }

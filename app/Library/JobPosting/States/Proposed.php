@@ -15,17 +15,15 @@ class Proposed extends AbstractState
     {
         $context = $this->getContext();
 
-        // HANDLE STUFF ...
-
-        $context->setState(new Contracted($context));
+        $context->setData(collect([]))
+            ->setState(new Contracted($context));
     }
 
     public function handleReject()
     {
         $context = $this->getContext();
 
-        // HANDLE STUFF ...
-
-        $context->setState(new Posted($context));
+        $context->setData(collect([]))
+            ->setState(new Posted($context));
     }
 }
